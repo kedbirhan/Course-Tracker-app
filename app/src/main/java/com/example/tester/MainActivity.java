@@ -115,12 +115,12 @@ public class MainActivity extends Activity {
                ArrayList<String> secInfo= new ArrayList<>(); // all the section info  will go to this list
                while (sections.hasNext()){
                    String info="";
-                   String delimeter="$#";
+                   String delimeter="##";
                    String sec_num= sections.next(); // section number
                    JSONObject _sec=curr_class.getJSONObject(sec_num);
                    System.out.println(debug);
                    info+=sec_num+delimeter+_sec.get("name") + delimeter+ _sec.get("time")+ delimeter+ _sec.get("days")
-                           + delimeter+ _sec.get("crn");
+                           + delimeter+ _sec.get("crn") + delimeter+ _sec.get("instructor");
                   secInfo.add(info);
                    System.out.println(info + debug);
                }

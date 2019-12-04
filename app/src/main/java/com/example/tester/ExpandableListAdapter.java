@@ -40,8 +40,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final String childText = (String) getChild(groupPosition, childPosition);
+        final String childText = (String) getChild(groupPosition, childPosition); // this will be the sec information
 
+        String[] val= childText.split("##");
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -49,9 +50,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
 
         TextView txtListChild = (TextView) convertView
-                .findViewById(R.id.lblListItem);
+                .findViewById(R.id.sec_name);
+        TextView txtListChild1 = (TextView) convertView
+                .findViewById(R.id.date);
 
-        txtListChild.setText(childText);
+        txtListChild.setText(val[0] + " " + val[5] + "  " + val[4] );
+        txtListChild1.setText(val[2] + "    " + val[3]);
         return convertView;
     }
 
