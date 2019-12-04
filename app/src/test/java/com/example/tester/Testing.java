@@ -9,9 +9,15 @@ import static org.junit.Assert.*;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class ExampleUnitTest {
+public class Testing {
     @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+   public void testSectionClass(){
+        SectionTracker section = new SectionTracker("19881");
+
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
