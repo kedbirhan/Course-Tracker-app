@@ -54,7 +54,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView txtListChild1 = (TextView) convertView
                 .findViewById(R.id.date);
 
-        txtListChild.setText(val[0] + " " + val[5] + "  " + val[4] );
+        txtListChild.setText("Section: "+ val[0] + "\t Instructor: " + val[5] + "\t CRN: " + val[4] );
         txtListChild1.setText(val[2] + "    " + val[3]);
         return convertView;
     }

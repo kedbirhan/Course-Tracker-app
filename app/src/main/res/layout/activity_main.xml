@@ -5,9 +5,23 @@
     android:orientation="vertical"
     android:background="#f4f4f4" >
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="WELCOME"
+        android:textAlignment="center"
+        android:textColor="#3F51B5"
+        android:textSize="36sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:text="pick class below to get notification when open seat is availble"
+        android:textColor="#3F51B5" />
+
     <ExpandableListView
         android:id="@+id/lvExp"
         android:layout_width="match_parent"
-        android:layout_height="718dp" />
+        android:layout_height="469dp" />
 
 </LinearLayout>

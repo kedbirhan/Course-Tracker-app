@@ -81,13 +81,14 @@ public class MainActivity extends Activity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
+                String crn= listDataChild.get(
+                        listDataHeader.get(groupPosition)).get(
+                        childPosition).split("##")[4];
                 Toast.makeText(
                         getApplicationContext(),
                         listDataHeader.get(groupPosition)
                                 + " : "
-                                + listDataChild.get(
-                                listDataHeader.get(groupPosition)).get(
-                                childPosition), Toast.LENGTH_SHORT)
+                                +crn , Toast.LENGTH_SHORT)
                         .show();
                 return false;
             }
