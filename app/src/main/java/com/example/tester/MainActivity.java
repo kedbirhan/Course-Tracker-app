@@ -3,12 +3,14 @@ package com.example.tester;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +21,7 @@ import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.app.AlertDialog;
 
 public class MainActivity extends Activity {
     static String  table_name="reg_table";
@@ -120,21 +123,43 @@ public class MainActivity extends Activity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                String crn= listDataChild.get(
+                String [] info=listDataChild.get(
                         listDataHeader.get(groupPosition)).get(
-                        childPosition).split("##")[4];
+                        childPosition).split("##");
+                String crn= info[4];
                 Toast.makeText(
                         getApplicationContext(),
                         listDataHeader.get(groupPosition)
                                 + " : "
                                 +crn , Toast.LENGTH_SHORT)
                         .show();
+                            alertDialogDemo(info);
+
                 return false;
+
             }
         });
 
         }
 
+    private void alertDialogDemo(String [] info) {
+        System.out.println(Arrays.toString(info));
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(info[6]);
+        builder.setMessage("are you sure you want to be notified ?");
+        builder.setCancelable(true);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        builder.show();
+    }
 
     /*
      * Preparing the list data
@@ -147,7 +172,7 @@ public class MainActivity extends Activity {
             Iterator<String> classes= obj.keys(); // gets the class names
             Iterator<String>  sec;
            while(classes.hasNext()){
-               String class_name= classes.next();
+               String class_name= classes.next(); // class name CS112
                listDataHeader.add(class_name); // add the name of the class
                JSONObject curr_class=obj.getJSONObject(class_name); // current class
                Iterator<String> sections=curr_class.keys(); // sections name
@@ -158,7 +183,7 @@ public class MainActivity extends Activity {
                    String sec_num= sections.next(); // section number
                    JSONObject _sec=curr_class.getJSONObject(sec_num);
                    info+=sec_num+delimeter+_sec.get("name") + delimeter+ _sec.get("time")+ delimeter+ _sec.get("days")
-                           + delimeter+ _sec.get("crn") + delimeter+ _sec.get("instructor");
+                           + delimeter+ _sec.get("crn") + delimeter+ _sec.get("instructor")+ delimeter+class_name;
                   secInfo.add(info);
                }
                listDataChild.put(class_name, secInfo);
@@ -168,7 +193,6 @@ public class MainActivity extends Activity {
         }
 
     }
-
    public String loadData(){
        String json= null;
        try{
@@ -182,8 +206,6 @@ public class MainActivity extends Activity {
            e.printStackTrace();
        }
        return json;
-
-
    }
 
 }

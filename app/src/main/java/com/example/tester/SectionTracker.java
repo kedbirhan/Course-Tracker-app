@@ -14,7 +14,7 @@ import java.util.TimerTask;
 
 public class SectionTracker extends Service {
     private String crn = "19881";
-    private final long INTERVAL = 5000; // one minute
+    private final long INTERVAL = 5000 * 60 *100; // one minute
     private final String URL = "https://patriotweb.gmu.edu/pls/prod/bwckschd.p_disp_detail_sched?term_in=202010&crn_in=";
 
     private String[] seats = new String[3];
@@ -110,7 +110,7 @@ public class SectionTracker extends Service {
     @Override
     public void onDestroy() {
         stopSchedule();
-        Intent broadcastIntent = new Intent(this, ServiceRestartBroadcastReceiver.class);
+        Intent broadcastIntent = new Intent(this , ServiceRestartBroadcastReceiver.class);
         sendBroadcast(broadcastIntent);
     }
 }
