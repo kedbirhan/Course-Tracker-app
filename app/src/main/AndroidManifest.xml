@@ -17,5 +17,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service
+            android:name="com.example.tester.SectionTracker"
+            android:enabled="true" >
+        </service>
+
+        <receiver
+            android:name="com.example.tester.ServiceRestartBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped">
+        </receiver>
+
     </application>
 </manifest>

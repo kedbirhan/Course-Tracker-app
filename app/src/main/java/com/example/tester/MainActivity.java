@@ -7,38 +7,75 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import android.app.Activity;
-import android.content.res.AssetManager;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.Toast;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends Activity {
-    String debug=" +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
-
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild; // class name, sec follewed by its desciption
 
+    private Intent sectionTrackerIntent;
+
+    /**
+     * Checks whether the section tracker is running
+     */
+    private boolean isSectionTrackerRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (SectionTracker.class.equals(service.service.getClassName())) {
+                System.out.println("Service Tracker is already running");
+                return true;
+            }
+        }
+        System.out.println("Service Tracker is starting...");
+        return false;
+    }
+
+
+    /**
+     * When the app is killed, the service must be killed so the BroadcastReceiver restarts it
+     * and it doesn't die with the app.
+     */
+    @Override
+    protected void onDestroy() {
+        stopService(sectionTrackerIntent);
+        super.onDestroy();
+    }
+
+    /**
+     * Start the Section Tracker Service
+     */
+    public void startSectionTrackerService(){
+        // Start Service Tracker service
+        sectionTrackerIntent = new Intent(this, SectionTracker.class);
+        if(!isSectionTrackerRunning()){
+            startService(sectionTrackerIntent);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        startSectionTrackerService();
+
         prepareListData();
-        System.out.println("jfjf");
 
         // get the listview
-        expListView = (ExpandableListView) findViewById(R.id.lvExp);
+        expListView = findViewById(R.id.lvExp);
 
         // preparing list data
         prepareListData();
@@ -112,18 +149,15 @@ public class MainActivity extends Activity {
                listDataHeader.add(class_name); // add the name of the class
                JSONObject curr_class=obj.getJSONObject(class_name); // current class
                Iterator<String> sections=curr_class.keys(); // sections name
-               System.out.println(class_name + debug);
                ArrayList<String> secInfo= new ArrayList<>(); // all the section info  will go to this list
                while (sections.hasNext()){
                    String info="";
                    String delimeter="##";
                    String sec_num= sections.next(); // section number
                    JSONObject _sec=curr_class.getJSONObject(sec_num);
-                   System.out.println(debug);
                    info+=sec_num+delimeter+_sec.get("name") + delimeter+ _sec.get("time")+ delimeter+ _sec.get("days")
                            + delimeter+ _sec.get("crn") + delimeter+ _sec.get("instructor");
                   secInfo.add(info);
-                   System.out.println(info + debug);
                }
                listDataChild.put(class_name, secInfo);
            }
@@ -144,7 +178,6 @@ public class MainActivity extends Activity {
            json = new String(buffer,"UTF-8");
        }catch (IOException e) {
            e.printStackTrace();
-           System.out.println("error reading file" + debug);
        }
        return json;
 

@@ -1,31 +1,24 @@
 package com.example.tester;
 
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+import androidx.annotation.Nullable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SectionTracker {
-    private String crn;
-    private final long INTERVAL = 1 * 60 * 1000; // one minute
+public class SectionTracker extends Service {
+    private String crn = "19881";
+    private final long INTERVAL = 5000; // one minute
     private final String URL = "https://patriotweb.gmu.edu/pls/prod/bwckschd.p_disp_detail_sched?term_in=202010&crn_in=";
 
     private String[] seats = new String[3];
     private String[] waitList = new String[3];
     private Timer timer = null;
-
-    /**
-     * Starts a section tracker that will renew section data every minute
-     * @param crn for the section
-     */
-    public SectionTracker(String crn){
-        this.crn = crn;
-        // Get new data every minute
-        startSchedule();
-    }
 
     /**
      * Get seats
@@ -98,5 +91,24 @@ public class SectionTracker {
             this.seats[i] = seatsData.select("td").get(i).text();
             this.waitList[i] = waitListData.select("td").get(i).text();
         }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        System.out.println("Section tracker service started");
+        startSchedule();
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        stopSchedule();
+        Intent broadcastIntent = new Intent(this, ServiceRestartBroadcastReceiver.class);
+        sendBroadcast(broadcastIntent);
     }
 }
