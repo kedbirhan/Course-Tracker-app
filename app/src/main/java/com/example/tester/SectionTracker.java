@@ -3,7 +3,6 @@ package com.example.tester;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import androidx.annotation.Nullable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -20,22 +19,6 @@ public class SectionTracker extends Service {
     private String[] seats = new String[3];
     private String[] waitList = new String[3];
     private Timer timer = null;
-
-    /**
-     * Get seats
-     * @return ['capacity', 'actual', 'Remaining']
-     */
-    public String[] getSeats(){
-        return this.seats;
-    }
-
-    /**
-     * Get waitList Seats
-     * @return ['capacity', 'actual', 'Remaining']
-     */
-    public String[] getWaitList(){
-        return this.waitList;
-    }
 
     /**
      * Stop the schedule
@@ -102,7 +85,9 @@ public class SectionTracker extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        System.out.println("Section tracker service started");
+
+        
+        System.out.println("Setting up crn ");
         startSchedule();
         return START_STICKY;
     }

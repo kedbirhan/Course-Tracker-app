@@ -142,7 +142,7 @@ public class MainActivity extends Activity {
 
         }
 
-    private void alertDialogDemo(String [] info) {
+    private void alertDialogDemo(final String [] info) {
         System.out.println(Arrays.toString(info));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(info[6]);
@@ -150,7 +150,10 @@ public class MainActivity extends Activity {
         builder.setCancelable(true);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
+                // User clicked OK button;
+                // notify service user wants to track a section
+                sectionTrackerIntent.putExtra("newCrn", info[4]);
+                startService(sectionTrackerIntent);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
