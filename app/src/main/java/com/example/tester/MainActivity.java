@@ -21,6 +21,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends Activity {
+    static String  table_name="reg_table";
+    static String db_name="reg_db";
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;

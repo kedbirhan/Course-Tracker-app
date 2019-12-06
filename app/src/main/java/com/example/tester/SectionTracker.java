@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -91,6 +92,7 @@ public class SectionTracker extends Service {
             this.seats[i] = seatsData.select("td").get(i).text();
             this.waitList[i] = waitListData.select("td").get(i).text();
         }
+        System.out.println(Arrays.toString(seats));
     }
 
     @Override
