@@ -4,27 +4,41 @@ package com.example.tester;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Databasehelper  extends SQLiteOpenHelper {
+    private static final String TAG = "Databasehelper++++++++++++++++++++++++++++++++++++++";
+
 //    crate a table named todo, which as ID and todo_col columns
-    static String _ID="_id";
+public SQLiteDatabase db=null;
+private Databasehelper dbHelper =null;
+    static String table_name="reg_table";
+    static String _id="_id";
     static String crn="crn";
-    static String className="className";
-    static String sec="section";
-    static  String jobNum="jobNum";
-    static  String instrctor="instructor";
+    static String title="title"; // inntroduction to cs
+    static String name="name"; // cs100
+    static String section="section";
+    static  String isFound="setFound";
+    static  String instructor="instructor";
     static String time= "time";
     static String day="day";
-    static String table_name="reg_table";
+    static String remaining="remaining";
+    static String capacity="capacity";
+    static String[] columns = new String[]{_id,crn,name,section,isFound,instructor,time,day,table_name};
 // table colums are
         //_id, crn, className, section, jonNum, instructor, time,day
-    final private static String CREATE_CMD =
-            "CREATE TABLE reg_table (" + _ID +
-                    " INTEGER PRIMARY KEY AUTOINCREMENT, " + crn + " TEXT NOT NULL, " + className
-                    + " TEXT, " + sec + " TEXT, " + jobNum + " INTEGER, " + instrctor + " TEXT, "
-                    + time + " TEXT, " + day + " TEXT)";
+     String CREATE_CMD =
+            "CREATE TABLE reg_table (" + _id +
+                    " INTEGER PRIMARY KEY, " + crn + " TEXT PRIMARY KEY  NOT NULL, " + name
+                    + " TEXT, " + title + " TEXT, "+ section + " TEXT, " + isFound + " TEXT, " + instructor + " TEXT, "
+                    + time + " TEXT, " + day + " TEXT, "+ remaining + " TEXT, "+ capacity + " TEXT"
+                    +")";
 
     final private static String db_name = "reg_db";
     final private static Integer VERSION = 1;
@@ -50,6 +64,63 @@ public class Databasehelper  extends SQLiteOpenHelper {
     void deleteDatabase ( ) {
         context.deleteDatabase(db_name);
     }
+
+    public String[] getAllCRN(Context context){
+
+        dbHelper= new Databasehelper(context);
+        db=dbHelper.getWritableDatabase();
+        Cursor cr= db.query(table_name, new String[]{"crn"}, null, new String[]{}, null, null, null);
+        int rowSize= cr.getCount();
+        String [] crn= new String[rowSize];
+        int i=0;
+        while(cr.moveToNext()){
+            int index;
+            index=cr.getColumnIndexOrThrow("crn");
+            crn[i++]=cr.getString(index);
+        }
+        cr.close();
+        dbHelper.close();
+    return crn;
+
+
+    }
+    void setSection(HashMap<String,String> info,Context context){
+
+        ContentValues val = new ContentValues();
+        val.put(crn,info.get(crn)); val.put(title,info.get(title));val.put(name, info.get(name));
+        val.put(section, info.get(section));val.put(isFound, info.get(isFound));val.put(instructor, info.get(instructor));
+        val.put(time, info.get(time));val.put(day, info.get(day));val.put(remaining, info.get(remaining));
+        val.put(capacity, info.get(capacity));
+                                // open the DB if not open
+        if(dbHelper==null)
+            dbHelper= new Databasehelper(context);
+        if(db==null)
+            db=dbHelper.getWritableDatabase();
+
+                                    // inserting
+        db.insert(table_name,null,val);
+        Log.i(TAG, "setSection: ");
+        
+    }
+
+   void  removeSection(Context context,String crn){
+        if(dbHelper==null)
+        dbHelper= new Databasehelper(context);
+        if(db==null)
+        db=dbHelper.getWritableDatabase();
+
+       String[] del={String.valueOf(crn)};
+       Log.i(TAG, "removeSection: ");
+       db.delete(table_name, "crn" +"=?", del);
+       Log.i(TAG, "removeSection: successfully delted");
+
+
+   }
+
+
+
+
+
 
 }
 

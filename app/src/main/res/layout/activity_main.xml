@@ -22,6 +22,17 @@
     <ExpandableListView
         android:id="@+id/lvExp"
         android:layout_width="match_parent"
-        android:layout_height="469dp" />
+        android:layout_height="335dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:text="classes currently tracking" />
+
+    <ListView
+        android:id="@+id/trackListView"
+        android:layout_width="match_parent"
+        android:layout_height="229dp" />
 
 </LinearLayout>

@@ -9,10 +9,14 @@ import java.util.Iterator;
 import java.util.List;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -24,6 +28,10 @@ import org.json.JSONObject;
 import android.app.AlertDialog;
 
 public class MainActivity extends Activity {
+    private static final String TAG = "MainActivity";
+    public  Databasehelper dbHelper=null;
+    public  SQLiteDatabase db=null;
+
     static String  table_name="reg_table";
     static String db_name="reg_db";
     ExpandableListAdapter listAdapter;
@@ -74,6 +82,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dbHelper = new Databasehelper(this);
+        db=dbHelper.getWritableDatabase();// get writable database
+
 
         startSectionTrackerService();
 
@@ -141,7 +152,7 @@ public class MainActivity extends Activity {
         });
 
         }
-
+//// 002, intro to java, time, day, crn, instrctor,CS475
     private void alertDialogDemo(final String [] info) {
         System.out.println(Arrays.toString(info));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -210,5 +221,36 @@ public class MainActivity extends Activity {
        }
        return json;
    }
+
+    void setSection(HashMap<String,String> info){
+        ContentValues val = new ContentValues();
+        val.put(Databasehelper.crn,info.get(Databasehelper.crn)); val.put(Databasehelper.title,info.get(Databasehelper.title));val.put(Databasehelper.name, info.get(Databasehelper.name));
+        val.put(Databasehelper.section, info.get(Databasehelper.section));val.put(Databasehelper.isFound, info.get(Databasehelper.isFound));val.put(Databasehelper.instructor, info.get(Databasehelper.instructor));
+        val.put(Databasehelper.time, info.get(Databasehelper.time));val.put(Databasehelper.day, info.get(Databasehelper.day));val.put(Databasehelper.remaining, info.get(Databasehelper.remaining));
+        val.put(Databasehelper.capacity, info.get(Databasehelper.capacity));
+        // open the DB if not open
+        if(dbHelper==null)
+            dbHelper= new Databasehelper(this);
+        if(db==null)
+            db=dbHelper.getWritableDatabase();
+
+        // inserting
+        db.insert(table_name,null,val);
+        Log.i(TAG, "setSection: ");
+    }
+    void  removeSection(Context context,String crn){
+        if(dbHelper==null)
+            dbHelper= new Databasehelper(context);
+        if(db==null)
+            db=dbHelper.getWritableDatabase();
+
+        String[] del={String.valueOf(crn)};
+        Log.i(TAG, "removeSection: ");
+        db.delete(table_name, "crn" +"=?", del);
+        Log.i(TAG, "removeSection: successfully delted");
+    }
+
+
+
 
 }
