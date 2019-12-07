@@ -1,8 +1,7 @@
-package com.example.tester;
+package com.example.gmucoursetracker;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -12,12 +11,6 @@ import static org.junit.Assert.*;
 public class Testing {
     @Test
    public void testSectionClass(){
-        SectionTracker section = new SectionTracker("19881");
 
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

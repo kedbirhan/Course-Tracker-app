@@ -1,4 +1,4 @@
-package com.example.tester;
+package com.example.gmucoursetracker;
 
 import java.util.HashMap;
 import java.util.List;

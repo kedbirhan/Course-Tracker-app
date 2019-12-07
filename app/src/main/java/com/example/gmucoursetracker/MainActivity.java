@@ -1,4 +1,4 @@
-package com.example.tester;
+package com.example.gmucoursetracker;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,14 +9,11 @@ import java.util.Iterator;
 import java.util.List;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -31,9 +28,6 @@ public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
     public  Databasehelper dbHelper=null;
     public  SQLiteDatabase db=null;
-
-    static String  table_name="reg_table";
-    static String db_name="reg_db";
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
@@ -74,7 +68,9 @@ public class MainActivity extends Activity {
         // Start Service Tracker service
         sectionTrackerIntent = new Intent(this, SectionTracker.class);
         if(!isSectionTrackerRunning()){
+            sectionTrackerIntent.putExtra("start", true);
             startService(sectionTrackerIntent);
+            sectionTrackerIntent.putExtra("start", false);
         }
     }
 
@@ -84,7 +80,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         dbHelper = new Databasehelper(this);
         db=dbHelper.getWritableDatabase();// get writable database
-
 
         startSectionTrackerService();
 
@@ -162,8 +157,14 @@ public class MainActivity extends Activity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button;
+                if(dbHelper.contains(info[4])){
+                    Toast.makeText(getApplicationContext(), "You are already tracking this CRN",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 // notify service user wants to track a section
-                sectionTrackerIntent.putExtra("newCrn", info[4]);
+                sectionTrackerIntent.putExtra("sectionInfo", info);
                 startService(sectionTrackerIntent);
             }
         });
@@ -221,43 +222,4 @@ public class MainActivity extends Activity {
        }
        return json;
    }
-
-    void setSection(HashMap<String,String> info){
-        ContentValues val = new ContentValues();
-        val.put(Databasehelper.crn,info.get(Databasehelper.crn)); val.put(Databasehelper.title,info.get(Databasehelper.title));val.put(Databasehelper.name, info.get(Databasehelper.name));
-        val.put(Databasehelper.section, info.get(Databasehelper.section));val.put(Databasehelper.isFound, info.get(Databasehelper.isFound));val.put(Databasehelper.instructor, info.get(Databasehelper.instructor));
-        val.put(Databasehelper.time, info.get(Databasehelper.time));val.put(Databasehelper.day, info.get(Databasehelper.day));val.put(Databasehelper.remaining, info.get(Databasehelper.remaining));
-        val.put(Databasehelper.capacity, info.get(Databasehelper.capacity));
-        // open the DB if not open
-        if(dbHelper==null)
-            dbHelper= new Databasehelper(this);
-        if(db==null)
-            db=dbHelper.getWritableDatabase();
-
-        // inserting
-        db.insert(table_name,null,val);
-        Log.i(TAG, "setSection: ");
-    }
-    void  removeSection(Context context,String crn){
-        if(dbHelper==null)
-            dbHelper= new Databasehelper(context);
-        if(db==null)
-            db=dbHelper.getWritableDatabase();
-
-        String[] del={String.valueOf(crn)};
-        Log.i(TAG, "removeSection: ");
-        db.delete(table_name, "crn" +"=?", del);
-        Log.i(TAG, "removeSection: successfully delted");
-    }
-
-    private Cursor readDb() {
-
-        return db.query(Databasehelper.table_name, Databasehelper.columns, null, new String[]{}, null, null, null);
-
-    }
-
-
-
-
-
 }

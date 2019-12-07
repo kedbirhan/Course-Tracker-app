@@ -1,4 +1,4 @@
-package com.example.tester;
+package com.example.gmucoursetracker;
 
 import android.content.Context;
 import android.database.Cursor;

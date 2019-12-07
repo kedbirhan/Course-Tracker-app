@@ -1,4 +1,4 @@
-package com.example.tester;
+package com.example.gmucoursetracker;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,7 +10,8 @@ import android.content.Intent;
 public class ServiceRestartBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        System.out.println("Section tracker service terminated");
-        context.startService(new Intent(context, SectionTracker.class));;
+        intent = new Intent(context, SectionTracker.class);
+        intent.putExtra("start", true);
+        context.startService(intent);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.tester;
+package com.example.gmucoursetracker;
 
 
 
@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Databasehelper  extends SQLiteOpenHelper {
@@ -35,7 +34,7 @@ private Databasehelper dbHelper =null;
         //_id, crn, className, section, jonNum, instructor, time,day
      String CREATE_CMD =
             "CREATE TABLE reg_table (" + _id +
-                    " INTEGER PRIMARY KEY, " + crn + " TEXT PRIMARY KEY  NOT NULL, " + name
+                    " INTEGER PRIMARY KEY, " + crn + " TEXT NOT NULL, " + name
                     + " TEXT, " + title + " TEXT, "+ section + " TEXT, " + isFound + " TEXT, " + instructor + " TEXT, "
                     + time + " TEXT, " + day + " TEXT, "+ remaining + " TEXT, "+ capacity + " TEXT"
                     +")";
@@ -65,7 +64,7 @@ private Databasehelper dbHelper =null;
         context.deleteDatabase(db_name);
     }
 
-    public String[] getAllCRN(Context context){
+    public String[] getAllCRN(){
 
         dbHelper= new Databasehelper(context);
         db=dbHelper.getWritableDatabase();
@@ -84,7 +83,7 @@ private Databasehelper dbHelper =null;
 
 
     }
-    void setSection(HashMap<String,String> info,Context context){
+    void setSection(HashMap<String,String> info){
 
         ContentValues val = new ContentValues();
         val.put(crn,info.get(crn)); val.put(title,info.get(title));val.put(name, info.get(name));
