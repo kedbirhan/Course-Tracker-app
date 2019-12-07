@@ -250,6 +250,13 @@ public class MainActivity extends Activity {
         Log.i(TAG, "removeSection: successfully delted");
     }
 
+    private Cursor readDb() {
+
+        return db.query(Databasehelper.table_name, Databasehelper.columns, null, new String[]{}, null, null, null);
+
+    }
+
+
 
 
 

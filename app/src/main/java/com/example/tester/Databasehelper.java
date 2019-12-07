@@ -30,7 +30,7 @@ private Databasehelper dbHelper =null;
     static String day="day";
     static String remaining="remaining";
     static String capacity="capacity";
-    static String[] columns = new String[]{_id,crn,name,section,isFound,instructor,time,day,table_name};
+    static String[] columns = new String[]{_id,crn,title,name,section,isFound,instructor,time,day,remaining,capacity};
 // table colums are
         //_id, crn, className, section, jonNum, instructor, time,day
      String CREATE_CMD =
@@ -116,6 +116,21 @@ private Databasehelper dbHelper =null;
 
 
    }
+
+    public  boolean contains (String arg) {
+        if(dbHelper==null)
+            dbHelper= new Databasehelper(context);
+        if(db==null)
+            db=dbHelper.getWritableDatabase();
+        String Query = "Select * from " + table_name + " where " + crn + " = " + arg;
+        Cursor cursor = db.rawQuery(Query, null);
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
 
 
 
