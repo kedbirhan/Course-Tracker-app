@@ -71,7 +71,7 @@ public class SectionTracker extends Service {
 
         Iterator<String> it = list.iterator();
         while(it.hasNext()){
-            System.out.println(it.next());
+            createTimer(it.next());
         }
     }
 
@@ -121,11 +121,27 @@ public class SectionTracker extends Service {
                 try {
                     String[][] results = new GetSectionDataAsync().execute(crn).get();
                     System.out.println(Arrays.toString(results[0]));
+
+                    // TODO: 12/8/2019 send notification when course has available seat 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }, 0, 2 * 60 * 1000);
+        timers.put(crn, timer);
+    }
+
+    /**
+     * Sto
+     * @param crn
+     */
+    private void stopTrackingSection(String crn){
+        Timer timer = timers.remove(crn);
+        if(timer != null){
+            timer.cancel();
+            timer.purge();
+        }
+        databasehelper.removeSection(crn);
     }
 
     @Override

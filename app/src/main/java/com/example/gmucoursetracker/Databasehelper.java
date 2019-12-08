@@ -75,7 +75,7 @@ public class Databasehelper  extends SQLiteOpenHelper {
      * @param context
      * @param crn
      */
-    void removeSection(Context context,String crn){
+    void removeSection(String crn){
         db = this.getWritableDatabase();
 
         String[] del={String.valueOf(crn)};
