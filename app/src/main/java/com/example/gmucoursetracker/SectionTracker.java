@@ -74,9 +74,7 @@ public class SectionTracker extends Service {
             results[0][0] = "1";
             results[0][2] = "0";
         }
-
         HashMap<String, String> sectionInfo = new HashMap<>();
-
         sectionInfo.put("section", info[0]);
         sectionInfo.put("title", info[1]);
         sectionInfo.put("time", info[2]);

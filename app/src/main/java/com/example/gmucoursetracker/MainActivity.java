@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild; // class name, sec follewed by its desciption
-
+    private int lastExpandedPosition = -1;
     private Intent sectionTrackerIntent;
 
     /**
@@ -119,6 +119,13 @@ public class MainActivity extends Activity {
                 Toast.makeText(getApplicationContext(),
                         listDataHeader.get(groupPosition) + " Expanded",
                         Toast.LENGTH_SHORT).show();
+
+                if (lastExpandedPosition != -1
+                        && groupPosition != lastExpandedPosition) {
+                    expListView.collapseGroup(lastExpandedPosition);
+                }
+                lastExpandedPosition = groupPosition;
+
             }
         });
 
@@ -146,7 +153,9 @@ public class MainActivity extends Activity {
             }
         });
 
+
         }
+
 //// 002, intro to java, time, day, crn, instrctor,CS475
     private void alertDialogDemo(final String [] info) {
         System.out.println(Arrays.toString(info));

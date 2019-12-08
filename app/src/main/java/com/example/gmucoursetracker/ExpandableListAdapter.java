@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
@@ -17,6 +18,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<String>> _listDataChild;
+    int lastExpandedGroupPosition;
+
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
                                  HashMap<String, List<String>> listChildData) {
@@ -65,6 +68,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 .size();
     }
 
+
+
     @Override
     public Object getGroup(int groupPosition) {
         return this._listDataHeader.get(groupPosition);
@@ -94,7 +99,21 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 .findViewById(R.id.lblListHeader);
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
+
+
+        if (isExpanded) {
+            lblListHeader.setTypeface(null, Typeface.BOLD);
+            lblListHeader.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                    R.drawable.ic_arrow_drop_up_black_24dp, 0);
+        } else {
+            // If group is not expanded then change the text back into normal
+            // and change the icon
+
+            lblListHeader.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                    R.drawable.ic_arrow_drop_down_black_24dp, 0);
+        }
         return convertView;
+
     }
 
     @Override

@@ -8,6 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#27C5AF"
         android:text="WELCOME"
         android:textAlignment="center"
         android:textColor="#3F51B5"
@@ -15,14 +16,20 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="57dp"
-        android:text="pick class below to get notification when open seat is availble"
-        android:textColor="#3F51B5" />
+        android:layout_height="wrap_content"
+        android:background="#27C5AF"
+        android:text="pick class below"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#3F51B5"
+        android:textSize="18sp"
+        android:textStyle="italic" />
 
     <ExpandableListView
         android:id="@+id/lvExp"
         android:layout_width="match_parent"
-        android:layout_height="335dp" />
+        android:layout_height="375dp" />
 
     <TextView
         android:id="@+id/textView"
