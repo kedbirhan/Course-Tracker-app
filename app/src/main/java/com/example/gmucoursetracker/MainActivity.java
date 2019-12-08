@@ -102,11 +102,12 @@ public class MainActivity extends Activity {
         // Listview Group collasped listener
         expListView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
 
+            // this is annoying
             @Override
             public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
+                /*Toast.makeText(getApplicationContext(),
                         listDataHeader.get(groupPosition) + " Collapsed",
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();*/
 
             }
         });
@@ -116,9 +117,9 @@ public class MainActivity extends Activity {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
+                /*Toast.makeText(getApplicationContext(),
                         listDataHeader.get(groupPosition) + " Expanded",
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();*/
             }
         });
 
@@ -132,14 +133,19 @@ public class MainActivity extends Activity {
                 String [] info=listDataChild.get(
                         listDataHeader.get(groupPosition)).get(
                         childPosition).split("##");
-                String crn= info[4];
-                Toast.makeText(
-                        getApplicationContext(),
-                        listDataHeader.get(groupPosition)
-                                + " : "
-                                +crn , Toast.LENGTH_SHORT)
-                        .show();
-                            alertDialogDemo(info);
+
+                if(dbHelper.contains(info[4])){
+                    Toast.makeText(getApplicationContext(), "You are already tracking this CRN",
+                            Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
+                /*String crn= info[4];
+                Toast.makeText( getApplicationContext(),
+                        listDataHeader.get(groupPosition) + " : " + crn ,
+                        Toast.LENGTH_SHORT).show();*/
+
+                alertDialogDemo(info);
 
                 return false;
 
@@ -156,13 +162,6 @@ public class MainActivity extends Activity {
         builder.setCancelable(true);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button;
-                if(dbHelper.contains(info[4])){
-                    Toast.makeText(getApplicationContext(), "You are already tracking this CRN",
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
                 // notify service user wants to track a section
                 sectionTrackerIntent.putExtra("sectionInfo", info);
                 startService(sectionTrackerIntent);

@@ -9,16 +9,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#27C5AF"
-        android:text="WELCOME"
+        android:text="GMU Course Tracker"
         android:textAlignment="center"
         android:textColor="#3F51B5"
-        android:textSize="36sp" />
+        android:textSize="30sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="21dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tracked Classes" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="21dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#27C5AF"
-        android:text="pick class below"
+        android:text="Click on classes that you want to track"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -29,7 +43,7 @@
     <ExpandableListView
         android:id="@+id/lvExp"
         android:layout_width="match_parent"
-        android:layout_height="375dp" />
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/textView"
@@ -40,6 +54,6 @@
     <ListView
         android:id="@+id/trackListView"
         android:layout_width="match_parent"
-        android:layout_height="229dp" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>
