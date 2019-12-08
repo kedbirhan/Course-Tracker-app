@@ -1,7 +1,6 @@
 package com.example.gmucoursetracker;
 
 import android.app.Service;
-import android.app.TaskInfo;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -15,7 +14,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
 
 public class SectionTracker extends Service {
     private final long INTERVAL = 5000 * 60 *100; // one minute

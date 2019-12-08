@@ -8,11 +8,24 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#27C5AF"
-        android:text="GMU Course Tracker"
+        android:background="#006940"
+        android:text="GMU CS Course Tracker"
         android:textAlignment="center"
-        android:textColor="#3F51B5"
+        android:textColor="#FFFFFF"
         android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#006940"
+        android:text="Get notifications when a class has an available seat."
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:textStyle="italic" />
 
     <Space
         android:layout_width="match_parent"
@@ -30,15 +43,15 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#27C5AF"
+        android:layout_height="33dp"
+        android:background="#fc3"
+        android:gravity="center"
         android:text="Click on classes that you want to track"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="#3F51B5"
-        android:textSize="18sp"
-        android:textStyle="italic" />
+        android:textColor="#000000"
+        android:textSize="14sp" />
 
     <ExpandableListView
         android:id="@+id/lvExp"
@@ -48,7 +61,7 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="42dp"
+        android:layout_height="61dp"
         android:text="classes currently tracking" />
 
     <ListView
