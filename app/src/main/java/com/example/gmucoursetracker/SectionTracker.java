@@ -1,6 +1,7 @@
 package com.example.gmucoursetracker;
 
 import android.app.Service;
+import android.app.TaskInfo;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -10,8 +11,11 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 public class SectionTracker extends Service {
     private final long INTERVAL = 5000 * 60 *100; // one minute
@@ -41,23 +45,40 @@ public class SectionTracker extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // service is starting
+        // service is starting, restart all section trackers
         if(intent.getBooleanExtra("start", false)){
             System.out.println("Starting Section Service Tracker");
             databasehelper = new Databasehelper(this);
             timers = new HashMap<>();
 
+            restartTimers();
+
             return START_STICKY;
         }
 
-        // service is already started, we are adding a new section to track
+        // add section to track
         String[] info = intent.getStringArrayExtra("sectionInfo");
-
         if(info == null) {
             System.out.println("Error: service needs to be passed info about the section.");
             return START_STICKY;
         }
 
+        startTrackingSection(info);
+
+        return START_STICKY;
+    }
+
+    public void restartTimers(){
+        LinkedList<String> list = databasehelper.getAllTrackedCRN();
+
+        Iterator<String> it = list.iterator();
+        while(it.hasNext()){
+            System.out.println(it.next());
+        }
+    }
+
+
+    private void startTrackingSection(final String[] info){
         String[][] results = new String[0][];
 
         // get section data from gmu
@@ -84,17 +105,31 @@ public class SectionTracker extends Service {
         sectionInfo.put("crn", info[4]);
         sectionInfo.put("instructor", info[5]);
         sectionInfo.put("name", info[6]);
-        sectionInfo.put("isFound", "false");
+        sectionInfo.put("available", "false");
         sectionInfo.put("capacity", results[0][0]);
         sectionInfo.put("remaining", results[0][2]);
+
+        // create timer
+        createTimer(info[4]);
 
         //save to database
         databasehelper.setSection(sectionInfo);
         //start timer
+    }
 
-
-
-        return START_STICKY;
+    private void createTimer(final String crn){
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    String[][] results = new GetSectionDataAsync().execute(crn).get();
+                    System.out.println(Arrays.toString(results[0]));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 2 * 60 * 1000);
     }
 
     @Override
@@ -105,7 +140,11 @@ public class SectionTracker extends Service {
     }
 
 
-    class GetSectionDataAsync extends AsyncTask<String, Void, String[][]> {
+    /**
+     * Gets section data from GMU
+     * Returns 2D array first row contains seats info, second row contains wait list seat info
+     */
+    private class GetSectionDataAsync extends AsyncTask<String, Void, String[][]> {
         private final String URL = "https://patriotweb.gmu.edu/pls/prod/bwckschd.p_disp_detail_sched?term_in=202010&crn_in=";
         @Override
         protected String[][] doInBackground(String... param) {
@@ -134,9 +173,7 @@ public class SectionTracker extends Service {
                 results[0][i] = seatsData.select("td").get(i).text();
                 results[1][i] = waitListData.select("td").get(i).text();
             }
-
             return results;
-
         }
     }
 

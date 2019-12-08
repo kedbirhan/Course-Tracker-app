@@ -1,7 +1,5 @@
 package com.example.gmucoursetracker;
 
-
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,49 +8,135 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class Databasehelper  extends SQLiteOpenHelper {
+
     private static final String TAG = "Databasehelper++++++++++++++++++++++++++++++++++++++";
 
-//    crate a table named todo, which as ID and todo_col columns
-public SQLiteDatabase db=null;
-private Databasehelper dbHelper =null;
-    static String table_name="reg_table";
-    static String _id="_id";
-    static String crn="crn";
-    static String title="title"; // inntroduction to cs
-    static String name="name"; // cs100
-    static String section="section";
-    static  String isFound="setFound";
-    static  String instructor="instructor";
-    static String time= "time";
-    static String day="day";
-    static String remaining="remaining";
-    static String capacity="capacity";
-    static String[] columns = new String[]{_id,crn,title,name,section,isFound,instructor,time,day,remaining,capacity};
-// table colums are
-        //_id, crn, className, section, jonNum, instructor, time,day
-     String CREATE_CMD =
-            "CREATE TABLE reg_table (" + _id +
-                    " INTEGER PRIMARY KEY, " + crn + " TEXT NOT NULL, " + name
-                    + " TEXT, " + title + " TEXT, "+ section + " TEXT, " + isFound + " TEXT, " + instructor + " TEXT, "
-                    + time + " TEXT, " + day + " TEXT, "+ remaining + " TEXT, "+ capacity + " TEXT"
-                    +")";
+    private SQLiteDatabase db = null;
 
-    final private static String db_name = "reg_db";
+    final private static String db_name = "SectionTracker3";
     final private static Integer VERSION = 1;
     final private Context context;
+
+    private String table_name = "sections";
+    //private String _id = "_id";
+    private String crn="crn";
+    private String title="title";
+    private String name="name";
+    private String section="section";
+    private String available = "available";
+    private String instructor="instructor";
+    private String time= "time";
+    private String day="day";
+    private String remaining="remaining";
+    private String capacity="capacity";
+
+    //private String[] columns = new String[]{_id,crn,title,name,section,available,instructor,time,day,remaining,capacity};
+
+    private String CREATE_CMD =  "CREATE TABLE " + table_name + " " +
+            "(" + crn + " TEXT NOT NULL PRIMARY KEY, " + name +
+            " TEXT, " + title + " TEXT, "+ section + " TEXT, " + available + " TEXT, " + instructor + " TEXT, " + time +
+            " TEXT, " + day + " TEXT, "+ remaining + " TEXT, "+ capacity + " TEXT" +")";
 
     public Databasehelper(Context context) {
         super(context, db_name, null, VERSION);
         this.context = context;
     }
-    //Called when the database is created for the first time. This is where the creation of tables
-    // and the initial population of the tables should happen.
+
+    /**
+     * Inserts or updates a section
+     * @param info
+     */
+    public void setSection(HashMap<String,String> info){
+        db = this.getWritableDatabase();
+
+        ContentValues val = new ContentValues();
+        val.put(crn,info.get(crn));
+        val.put(title,info.get(title));
+        val.put(name, info.get(name));
+        val.put(section, info.get(section));
+        val.put(available, info.get(available));
+        val.put(instructor, info.get(instructor));
+        val.put(time, info.get(time));
+        val.put(day, info.get(day));
+        val.put(remaining, info.get(remaining));
+        val.put(capacity, info.get(capacity));
+
+        // inserting
+        db.insert(table_name,null,val);
+        db.close();
+        Log.i(TAG, "setSection: ");
+    }
+
+    /**
+     * Removes a section
+     * @param context
+     * @param crn
+     */
+    void removeSection(Context context,String crn){
+        db = this.getWritableDatabase();
+
+        String[] del={String.valueOf(crn)};
+        Log.i(TAG, "removeSection: ");
+
+        db.delete(table_name, "crn" +"=?", del);
+        db.close();
+
+        Log.i(TAG, "removeSection: successfully delted");
+    }
+
+    public boolean contains (String arg) {
+        db = this.getReadableDatabase();
+
+        String Query = "Select * from " + table_name + " where " + crn + " = " + arg;
+        Cursor cursor = db.rawQuery(Query, null);
+
+        boolean contains = (cursor.getCount() > 0);
+        cursor.close();
+        db.close();
+        return contains;
+    }
+
+    /**
+     * Returns all the CRN that are currently being tracked (not available)
+     * @return crn being tracked
+     */
+    public LinkedList<String> getAllTrackedCRN(){
+        db = this.getReadableDatabase();
+
+        Cursor cr = db.rawQuery("select * from " + table_name,null);
+
+        LinkedList<String> list = new LinkedList<>();
+
+        while(cr.moveToNext()){
+            int index = cr.getColumnIndexOrThrow("crn");
+            String crn  = cr.getString(index);
+
+            index = cr.getColumnIndexOrThrow("available");
+            String available = cr.getString(index);
+
+            // check if the section has available seats or not
+            if(available.equals("true")){
+                continue;
+            }
+
+            list.add(crn);
+        }
+
+        cr.close();
+        db.close();
+
+        return list;
+    }
+
+
+
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_CMD); // this method is only create the database when the database is created the first time
-    } // this runs on when the database is created
+        db.execSQL(CREATE_CMD);
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -63,78 +147,6 @@ private Databasehelper dbHelper =null;
     void deleteDatabase ( ) {
         context.deleteDatabase(db_name);
     }
-
-    public String[] getAllCRN(){
-
-        dbHelper= new Databasehelper(context);
-        db=dbHelper.getWritableDatabase();
-        Cursor cr= db.query(table_name, new String[]{"crn"}, null, new String[]{}, null, null, null);
-        int rowSize= cr.getCount();
-        String [] crn= new String[rowSize];
-        int i=0;
-        while(cr.moveToNext()){
-            int index;
-            index=cr.getColumnIndexOrThrow("crn");
-            crn[i++]=cr.getString(index);
-        }
-        cr.close();
-        dbHelper.close();
-    return crn;
-
-
-    }
-    void setSection(HashMap<String,String> info){
-
-        ContentValues val = new ContentValues();
-        val.put(crn,info.get(crn)); val.put(title,info.get(title));val.put(name, info.get(name));
-        val.put(section, info.get(section));val.put(isFound, info.get(isFound));val.put(instructor, info.get(instructor));
-        val.put(time, info.get(time));val.put(day, info.get(day));val.put(remaining, info.get(remaining));
-        val.put(capacity, info.get(capacity));
-                                // open the DB if not open
-        if(dbHelper==null)
-            dbHelper= new Databasehelper(context);
-        if(db==null)
-            db=dbHelper.getWritableDatabase();
-
-                                    // inserting
-        db.insert(table_name,null,val);
-        Log.i(TAG, "setSection: ");
-        
-    }
-
-   void  removeSection(Context context,String crn){
-        if(dbHelper==null)
-        dbHelper= new Databasehelper(context);
-        if(db==null)
-        db=dbHelper.getWritableDatabase();
-
-       String[] del={String.valueOf(crn)};
-       Log.i(TAG, "removeSection: ");
-       db.delete(table_name, "crn" +"=?", del);
-       Log.i(TAG, "removeSection: successfully delted");
-
-
-   }
-
-    public  boolean contains (String arg) {
-        if(dbHelper==null)
-            dbHelper= new Databasehelper(context);
-        if(db==null)
-            db=dbHelper.getWritableDatabase();
-        String Query = "Select * from " + table_name + " where " + crn + " = " + arg;
-        Cursor cursor = db.rawQuery(Query, null);
-        if(cursor.getCount() <= 0){
-            cursor.close();
-            return false;
-        }
-        cursor.close();
-        return true;
-    }
-
-
-
-
-
 
 }
 

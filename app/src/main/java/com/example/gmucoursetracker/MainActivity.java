@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -20,14 +21,16 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.Toast;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.app.AlertDialog;
 
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
-    public  Databasehelper dbHelper=null;
-    public  SQLiteDatabase db=null;
+    public Databasehelper dbHelper = null;
+    public SQLiteDatabase db = null;
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
@@ -64,10 +67,10 @@ public class MainActivity extends Activity {
     /**
      * Start the Section Tracker Service
      */
-    public void startSectionTrackerService(){
+    public void startSectionTrackerService() {
         // Start Service Tracker service
         sectionTrackerIntent = new Intent(this, SectionTracker.class);
-        if(!isSectionTrackerRunning()){
+        if (!isSectionTrackerRunning()) {
             sectionTrackerIntent.putExtra("start", true);
             startService(sectionTrackerIntent);
             sectionTrackerIntent.putExtra("start", false);
@@ -79,7 +82,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         dbHelper = new Databasehelper(this);
-        db=dbHelper.getWritableDatabase();// get writable database
+        db = dbHelper.getWritableDatabase();// get writable database
 
         startSectionTrackerService();
 
@@ -116,39 +119,38 @@ public class MainActivity extends Activity {
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
+                // this TOAST is annoying for the user.
+                /*Toast.makeText(getApplicationContext(),
                         listDataHeader.get(groupPosition) + " Expanded",
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();*/
             }
         });
 
 
         // Listview on child click listener
         expListView.setOnChildClickListener(new OnChildClickListener() {
-
             @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                String [] info=listDataChild.get(
-                        listDataHeader.get(groupPosition)).get(
-                        childPosition).split("##");
-                String crn= info[4];
-                Toast.makeText(
-                        getApplicationContext(),
-                        listDataHeader.get(groupPosition)
-                                + " : "
-                                +crn , Toast.LENGTH_SHORT)
-                        .show();
-                            alertDialogDemo(info);
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                String[] info = listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).split("##");
+                String crn = info[4];
 
+                // Check if user is already tracking this CRN
+                if(dbHelper.contains(crn)){
+                    Toast.makeText(getApplicationContext(), "You are already tracking this course section",
+                            Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
+                alertDialogDemo(info);
                 return false;
-
             }
         });
 
-        }
-//// 002, intro to java, time, day, crn, instrctor,CS475
-    private void alertDialogDemo(final String [] info) {
+
+    }
+
+    //// 002, intro to java, time, day, crn, instructor,CS475
+    private void alertDialogDemo(final String[] info) {
         System.out.println(Arrays.toString(info));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(info[6]);
@@ -156,13 +158,6 @@ public class MainActivity extends Activity {
         builder.setCancelable(true);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button;
-                if(dbHelper.contains(info[4])){
-                    Toast.makeText(getApplicationContext(), "You are already tracking this CRN",
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
                 // notify service user wants to track a section
                 sectionTrackerIntent.putExtra("sectionInfo", info);
                 startService(sectionTrackerIntent);
@@ -180,46 +175,47 @@ public class MainActivity extends Activity {
      * Preparing the list data
      */
     private void prepareListData() {
-        listDataHeader= new ArrayList<>();
+        listDataHeader = new ArrayList<>();
         listDataChild = new HashMap<>();
         try {
             JSONObject obj = new JSONObject(loadData()); // get the whole json file
-            Iterator<String> classes= obj.keys(); // gets the class names
-            Iterator<String>  sec;
-           while(classes.hasNext()){
-               String class_name= classes.next(); // class name CS112
-               listDataHeader.add(class_name); // add the name of the class
-               JSONObject curr_class=obj.getJSONObject(class_name); // current class
-               Iterator<String> sections=curr_class.keys(); // sections name
-               ArrayList<String> secInfo= new ArrayList<>(); // all the section info  will go to this list
-               while (sections.hasNext()){
-                   String info="";
-                   String delimeter="##";
-                   String sec_num= sections.next(); // section number
-                   JSONObject _sec=curr_class.getJSONObject(sec_num);
-                   info+=sec_num+delimeter+_sec.get("name") + delimeter+ _sec.get("time")+ delimeter+ _sec.get("days")
-                           + delimeter+ _sec.get("crn") + delimeter+ _sec.get("instructor")+ delimeter+class_name;
-                  secInfo.add(info);
-               }
-               listDataChild.put(class_name, secInfo);
-           }
+            Iterator<String> classes = obj.keys(); // gets the class names
+            Iterator<String> sec;
+            while (classes.hasNext()) {
+                String class_name = classes.next(); // class name CS112
+                listDataHeader.add(class_name); // add the name of the class
+                JSONObject curr_class = obj.getJSONObject(class_name); // current class
+                Iterator<String> sections = curr_class.keys(); // sections name
+                ArrayList<String> secInfo = new ArrayList<>(); // all the section info  will go to this list
+                while (sections.hasNext()) {
+                    String info = "";
+                    String delimeter = "##";
+                    String sec_num = sections.next(); // section number
+                    JSONObject _sec = curr_class.getJSONObject(sec_num);
+                    info += sec_num + delimeter + _sec.get("name") + delimeter + _sec.get("time") + delimeter + _sec.get("days")
+                            + delimeter + _sec.get("crn") + delimeter + _sec.get("instructor") + delimeter + class_name;
+                    secInfo.add(info);
+                }
+                listDataChild.put(class_name, secInfo);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
     }
-   public String loadData(){
-       String json= null;
-       try{
-           InputStream is= MainActivity.this.getAssets().open("data.json");
-           int size= is.available();
-           byte[] buffer= new byte[size];
-           is.read(buffer);
-           is.close();
-           json = new String(buffer,"UTF-8");
-       }catch (IOException e) {
-           e.printStackTrace();
-       }
-       return json;
-   }
+
+    public String loadData() {
+        String json = null;
+        try {
+            InputStream is = MainActivity.this.getAssets().open("data.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
 }
