@@ -72,7 +72,6 @@ public class Databasehelper  extends SQLiteOpenHelper {
 
     /**
      * Removes a section
-     * @param context
      * @param crn
      */
     void removeSection(String crn){
