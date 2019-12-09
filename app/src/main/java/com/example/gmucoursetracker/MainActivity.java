@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -43,8 +44,8 @@ public class MainActivity extends Activity {
     private boolean isSectionTrackerRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (SectionTracker.class.equals(service.service.getClassName())) {
-                System.out.println("Service Tracker is already running");
+            if (SectionTracker.class.getName().equals(service.service.getClassName())){
+                Log.i(TAG, "Section Tracker service is already running");
                 return true;
             }
         }

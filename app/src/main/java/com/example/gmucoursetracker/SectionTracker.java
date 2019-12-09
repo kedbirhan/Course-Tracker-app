@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.util.Log;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -18,34 +20,16 @@ import java.util.TimerTask;
 public class SectionTracker extends Service {
     private final long INTERVAL = 5000 * 60 *100; // one minute
 
+    private static final String TAG = "+++++++++ SECTION TRACKER +++++++++";
+
     private HashMap<String, Timer> timers;
     private Databasehelper databasehelper;
-
-    /**
-     * Stop the schedule
-     */
-    public void stopSchedule(){
-    }
-
-    /**
-     * Start the schedule
-     */
-    public void startSchedule(final String crn){
-        System.out.println("Starting schedule for crn " + crn);
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-               // getData(crn);
-            }
-        }, 0, this.INTERVAL);
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // service is starting, restart all section trackers
         if(intent.getBooleanExtra("start", false)){
-            System.out.println("Starting Section Service Tracker");
+            Log.i(TAG, "Started");
             databasehelper = new Databasehelper(this);
             timers = new HashMap<>();
 
@@ -57,7 +41,7 @@ public class SectionTracker extends Service {
         // add section to track
         String[] info = intent.getStringArrayExtra("sectionInfo");
         if(info == null) {
-            System.out.println("Error: service needs to be passed info about the section.");
+            Log.e(TAG, "Section tracker needs to be passed a crn");
             return START_STICKY;
         }
 
@@ -67,9 +51,14 @@ public class SectionTracker extends Service {
     }
 
     public void restartTimers(){
+        Log.i(TAG, "Restarting trackers");
         LinkedList<String> list = databasehelper.getAllTrackedCRN();
 
         Iterator<String> it = list.iterator();
+        if(!it.hasNext()){
+            Log.i(TAG, "There are no tracked sections");
+            return;
+        }
         while(it.hasNext()){
             createTimer(it.next());
         }
@@ -77,7 +66,7 @@ public class SectionTracker extends Service {
 
 
     private void startTrackingSection(final String[] info){
-        String[][] results = new String[0][];
+        String[][] results = null;
 
         // get section data from gmu
         try {
@@ -86,9 +75,8 @@ public class SectionTracker extends Service {
             e.printStackTrace();
         }
 
-        System.out.println(Arrays.toString(results[0]));
-
         if(results == null){
+            results = new String[2][3];
             // just pretend the class is not empty, for now.
             results[0][0] = "1";
             results[0][2] = "0";
@@ -120,8 +108,7 @@ public class SectionTracker extends Service {
             public void run() {
                 try {
                     String[][] results = new GetSectionDataAsync().execute(crn).get();
-                    System.out.println(Arrays.toString(results[0]));
-
+                    Log.i(TAG, "Fetched crn " + crn);
                     // TODO: 12/8/2019 send notification when course has available seat 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -129,6 +116,7 @@ public class SectionTracker extends Service {
             }
         }, 0, 2 * 60 * 1000);
         timers.put(crn, timer);
+        Log.i(TAG, "Started tracking crn " + crn);
     }
 
     /**
@@ -146,6 +134,7 @@ public class SectionTracker extends Service {
 
     @Override
     public void onDestroy() {
+        Log.e(TAG, "Destroyed");
         //stopSchedule();
         Intent broadcastIntent = new Intent(this , ServiceRestartBroadcastReceiver.class);
         sendBroadcast(broadcastIntent);
@@ -167,10 +156,9 @@ public class SectionTracker extends Service {
 
             Document doc;
             try {
-                System.out.println("Getting new data for crn " + crn);
                 doc = Jsoup.connect(this.URL + crn).get();
             } catch (IOException e) {
-                System.out.println("Could not fetch section data for crn " + crn);
+                Log.e(TAG, "Could not fetch section data for crn " + crn);
                 e.printStackTrace();
                 return null;
             }

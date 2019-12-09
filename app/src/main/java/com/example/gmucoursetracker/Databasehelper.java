@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Databasehelper  extends SQLiteOpenHelper {
-
-    private static final String TAG = "Databasehelper++++++++++++++++++++++++++++++++++++++";
+    private static final String TAG = "+++++++++ DATABASE HELPER +++++++++";
 
     private SQLiteDatabase db = null;
 
@@ -67,7 +66,7 @@ public class Databasehelper  extends SQLiteOpenHelper {
         // inserting
         db.insert(table_name,null,val);
         db.close();
-        Log.i(TAG, "setSection: ");
+        Log.i(TAG, "Set/Update on CRN " + crn);
     }
 
     /**
@@ -77,14 +76,13 @@ public class Databasehelper  extends SQLiteOpenHelper {
     void removeSection(String crn){
         db = this.getWritableDatabase();
 
-        String[] del={String.valueOf(crn)};
-        Log.i(TAG, "removeSection: ");
+        String[] del = {crn};
+
 
         db.delete(table_name, "crn" +"=?", del);
         db.close();
 
-        Log.i(TAG, "removeSection: successfully delted");
-    }
+        Log.i(TAG, "Removed CRN " + crn);    }
 
     public boolean contains (String arg) {
         db = this.getReadableDatabase();
