@@ -1,10 +1,17 @@
 package com.example.gmucoursetracker;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,8 +25,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class SectionTracker extends Service {
-    private final long INTERVAL = 5000 * 60 *100; // one minute
-
     private static final String TAG = "+++++++++ SECTION TRACKER +++++++++";
 
     private HashMap<String, Timer> timers;
@@ -35,6 +40,13 @@ public class SectionTracker extends Service {
 
             restartTimers();
 
+            return START_STICKY;
+        }
+
+        String crn = intent.getStringExtra("stopSectionTracker");
+        if(crn != null){
+            Log.i(TAG, "Stopped tracking crn " + crn);
+            stopTrackingSection(crn);
             return START_STICKY;
         }
 
@@ -102,25 +114,61 @@ public class SectionTracker extends Service {
     }
 
     private void createTimer(final String crn){
+        final Context context = this;
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 try {
                     String[][] results = new GetSectionDataAsync().execute(crn).get();
+                    if(results == null){
+                        Log.e(TAG, "Fetched failed for crn " + crn);
+                        return;
+                    }
+
+                    // notify user if there is a spot
+                    if(!results[0][2].equals("0")){
+                        HashMap<String, String> info = databasehelper.getSectionInfo(crn);
+                        String title = info.get("title");
+                        String name = info.get("name");
+                        String section = info.get("section");
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "section-tracker")
+                                .setSmallIcon(R.drawable.ic_priority_high_black_24dp)
+                                .setContentTitle("Course section has an open seat")
+                                .setContentText(name + ", " + ", Section:" + section + ", CRN: " + crn)
+                                .setPriority(NotificationCompat.PRIORITY_MAX);
+
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                        notificationManager.notify(Integer.parseInt(crn), builder.build());
+
+                        try {
+                            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                            r.play();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        stopTrackingSection(crn);
+                        databasehelper.removeSection(crn);
+                    }
+
                     Log.i(TAG, "Fetched crn " + crn);
-                    // TODO: 12/8/2019 send notification when course has available seat 
+                    // TODO: 12/8/2019 send notification when course has available seat
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }, 0, 2 * 60 * 1000);
+        }, 0, 5000);
+
         timers.put(crn, timer);
         Log.i(TAG, "Started tracking crn " + crn);
     }
 
     /**
-     * Sto
+     * Stops tracking for a course
      * @param crn
      */
     private void stopTrackingSection(String crn){
@@ -128,14 +176,14 @@ public class SectionTracker extends Service {
         if(timer != null){
             timer.cancel();
             timer.purge();
+        }else{
+            Log.i(TAG, "Timer not found for crn "+ crn);
         }
-        databasehelper.removeSection(crn);
     }
 
     @Override
     public void onDestroy() {
         Log.e(TAG, "Destroyed");
-        //stopSchedule();
         Intent broadcastIntent = new Intent(this , ServiceRestartBroadcastReceiver.class);
         sendBroadcast(broadcastIntent);
     }

@@ -29,31 +29,23 @@ public class customCursorAdaptor extends CursorAdapter {
         TextView crn= view.findViewById(R.id.crn);
         TextView day= view.findViewById(R.id.days);
         TextView time= view.findViewById(R.id.times);
-        TextView isSeatAvailable= view.findViewById(R.id.isSeatAvailable);
+        //TextView isSeatAvailable= view.findViewById(R.id.isSeatAvailable);
 
         //get value from cursor for each view
-        String title1=cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.title));
+        String title1=cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.name));
         String sec1=cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.section));
         String crn1=cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.crn));
         String time1=cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.time));
         String day1 =cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.day));
-        String isSeatAvailable1=cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.available));
+        String ins1 =cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.instructor));
+        //String isSeatAvailable1=cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.available));
 
         // update the views selected
         title.setText(title1);
-        sec.setText(sec1);
-        ins.setText(sec1);
-        crn.setText(crn1);
-        day.setText(day1);
-        time.setText(time1);
-        isSeatAvailable.setText(isSeatAvailable1);
-
-
-
-
-
-
-
-
+        sec.setText("Section: "+sec1);
+        ins.setText("Instructor: "+ ins1);
+        crn.setText("CRN: "+ crn1);
+        day.setText("Days: " + day1);
+        time.setText("Time: " + time1);
     }
 }

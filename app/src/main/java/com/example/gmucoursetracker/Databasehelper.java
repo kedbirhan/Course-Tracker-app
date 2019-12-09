@@ -15,7 +15,7 @@ public class Databasehelper  extends SQLiteOpenHelper {
 
     private SQLiteDatabase db = null;
 
-    final private static String db_name = "SectionTracker3";
+    final private static String db_name = "SectionTracker6";
     final private static Integer VERSION = 1;
     final private Context context;
 
@@ -95,6 +95,19 @@ public class Databasehelper  extends SQLiteOpenHelper {
         db.close();
         return contains;
     }
+    public HashMap<String,String> getSectionInfo(String crn){
+        db = this.getReadableDatabase();
+        HashMap<String,String> map=new HashMap<>();
+        String Query = "Select * from " + table_name + " where " + this.crn + " = " + crn;
+        Cursor cursor = db.rawQuery(Query, null);
+        cursor.moveToFirst();
+        map.put("name",cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.name)));
+        map.put("title", cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.title)));
+        map.put("section", cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.section)));
+        db.close();
+       return map;
+    }
+
 
     /**
      * Returns all the CRN that are currently being tracked (not available)

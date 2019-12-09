@@ -82,6 +82,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         dbHelper = new Databasehelper(this);
+        //dbHelper.deleteDatabase();
         db=dbHelper.getWritableDatabase();// get writable database
 
         startSectionTrackerService();
@@ -166,7 +167,7 @@ public class MainActivity extends Activity {
         System.out.println(Arrays.toString(info));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(info[6]);
-        builder.setMessage("are you sure you want to be notified ?");
+        builder.setMessage("are you sure you want to be notified when this section has an open seat?");
         builder.setCancelable(true);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
