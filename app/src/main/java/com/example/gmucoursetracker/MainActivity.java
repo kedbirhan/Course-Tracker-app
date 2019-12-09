@@ -26,14 +26,16 @@ import android.app.AlertDialog;
 
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
-    public  Databasehelper dbHelper=null;
-    public  SQLiteDatabase db=null;
+    public static Databasehelper dbHelper=null;
+    public  static SQLiteDatabase db=null;
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild; // class name, sec follewed by its desciption
 
     private Intent sectionTrackerIntent;
+    private int lastExpandedPosition = -1;
+
 
     /**
      * Checks whether the section tracker is running
@@ -120,6 +122,11 @@ public class MainActivity extends Activity {
                 /*Toast.makeText(getApplicationContext(),
                         listDataHeader.get(groupPosition) + " Expanded",
                         Toast.LENGTH_SHORT).show();*/
+                if (lastExpandedPosition != -1
+                        && groupPosition != lastExpandedPosition) {
+                    expListView.collapseGroup(lastExpandedPosition);
+                }
+                lastExpandedPosition = groupPosition;
             }
         });
 
@@ -221,4 +228,12 @@ public class MainActivity extends Activity {
        }
        return json;
    }
+
+  public  void openActivity(View view){
+      Intent intent = new Intent(this, classTrackingActivity.class);
+      startActivity(intent);
+
+
+  }
+
 }

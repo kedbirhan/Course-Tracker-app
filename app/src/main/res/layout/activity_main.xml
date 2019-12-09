@@ -32,9 +32,10 @@
         android:layout_height="21dp" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/tracBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="openActivity"
         android:text="Tracked Classes" />
 
     <Space

@@ -20,23 +20,23 @@ public class Databasehelper  extends SQLiteOpenHelper {
     final private static Integer VERSION = 1;
     final private Context context;
 
-    private String table_name = "sections";
-    //private String _id = "_id";
-    private String crn="crn";
-    private String title="title";
-    private String name="name";
-    private String section="section";
-    private String available = "available";
-    private String instructor="instructor";
-    private String time= "time";
-    private String day="day";
-    private String remaining="remaining";
-    private String capacity="capacity";
+    public  static String table_name = "sections";
+    private String _id = "_id";
+    public static  String crn="crn";
+    public static  String title="title";
+    public static  String name="name";
+    public static  String section="section";
+    public static  String available = "available";
+    public static  String instructor="instructor";
+    public static  String time= "time";
+    public static  String day="day";
+    public static  String remaining="remaining";
+    public static  String capacity="capacity";
 
     //private String[] columns = new String[]{_id,crn,title,name,section,available,instructor,time,day,remaining,capacity};
 
     private String CREATE_CMD =  "CREATE TABLE " + table_name + " " +
-            "(" + crn + " TEXT NOT NULL PRIMARY KEY, " + name +
+            "(" + _id + " INTEGER PRIMARY KEY AUTOINCREMENT, "+ crn + " TEXT NOT NULL, " + name +
             " TEXT, " + title + " TEXT, "+ section + " TEXT, " + available + " TEXT, " + instructor + " TEXT, " + time +
             " TEXT, " + day + " TEXT, "+ remaining + " TEXT, "+ capacity + " TEXT" +")";
 
