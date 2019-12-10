@@ -32,7 +32,7 @@ public class SectionTracker extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // service is starting, restart all section trackersjkdjndsjn
+        // service is starting, restart all section trackersjkdjndsjn hh
         if(intent.getBooleanExtra("start", false)){
             Log.i(TAG, "Started");
             databasehelper = new Databasehelper(this);

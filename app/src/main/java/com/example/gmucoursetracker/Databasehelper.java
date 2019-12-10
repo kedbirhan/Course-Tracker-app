@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Databasehelper  extends SQLiteOpenHelper {
-    private static final String TAG = "+++++++++ DATABASE HELPER +++++++++";
+    private static final String TAG = "+++++++++ DATABASE HELPER ++++++++++";
 
     private SQLiteDatabase db = null;
 

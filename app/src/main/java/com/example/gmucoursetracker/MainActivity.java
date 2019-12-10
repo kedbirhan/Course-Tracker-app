@@ -162,7 +162,7 @@ public class MainActivity extends Activity {
         });
 
         }
-//// 002, intro to java, time, day, crn, instrctor,CS475
+//// 002, intro to java, time, day, crn, instrctor,CS475hh
     private void alertDialogDemo(final String [] info) {
         System.out.println(Arrays.toString(info));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

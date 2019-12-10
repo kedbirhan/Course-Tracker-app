@@ -31,7 +31,7 @@ public class customCursorAdaptor extends CursorAdapter {
         TextView time= view.findViewById(R.id.times);
         //TextView isSeatAvailable= view.findViewById(R.id.isSeatAvailable);
 
-        //get value from cursor for each view
+        //get value from cursor for each view hh
         String title1=cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.name));
         String sec1=cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.section));
         String crn1=cursor.getString(cursor.getColumnIndexOrThrow(Databasehelper.crn));

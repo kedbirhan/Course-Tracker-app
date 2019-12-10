@@ -9,7 +9,7 @@ import android.os.Bundle;
 public class FireMissilesDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Use the Builder class for convenient dialog construction
+        // Use the Builder class for convenient dialog construction hh
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("test")
                 .setPositiveButton("cos", new DialogInterface.OnClickListener() {

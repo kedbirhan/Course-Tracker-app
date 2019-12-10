@@ -48,7 +48,7 @@ public class classTrackingActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // show dialog if user wants to stop notifications.
+                // show dialog if user wants to stop notifications.hh
                 TextView crn= view.findViewById(R.id.crn);
                 String crnval=crn.getText().toString().substring(5);
 
